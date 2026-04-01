@@ -1,0 +1,32 @@
+@namespace EventEase.Components
+@using EventEase.Models
+@using Microsoft.AspNetCore.Components.Routing
+
+@if (EventItem == null ||
+    string.IsNullOrWhiteSpace(EventItem.Name) ||
+    string.IsNullOrWhiteSpace(EventItem.Location))
+{
+    <div class="alert alert-warning">
+        Invalid event data.
+    </div>
+}
+else
+{
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">@EventItem.Name</h5>
+            <p><strong>Date:</strong> @EventItem.Date.ToString("ddd, MMM d, yyyy")</p>
+            <p><strong>Location:</strong> @EventItem.Location</p>
+
+            <div class="d-flex gap-2">
+                <NavLink class="btn btn-outline-primary btn-sm" href="@($"/events/{EventItem.Id}")">Details</NavLink>
+                <NavLink class="btn btn-primary btn-sm" href="@($"/events/{EventItem.Id}/register")">Register</NavLink>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] 
+    public EventModel EventItem { get; set; } = default!;
+}

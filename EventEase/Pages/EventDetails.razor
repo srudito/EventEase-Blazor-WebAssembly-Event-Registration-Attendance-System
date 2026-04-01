@@ -1,0 +1,47 @@
+@page "/events/{id:int}"
+@inject EventEase.Services.EventService EventSvc
+@inject NavigationManager NavigationManager
+
+@if (model is null)
+{
+    <p>Loading…</p>
+}
+else
+{
+    <h1>@model.Name</h1>
+
+    <p><strong>Date:</strong> @model.Date.ToString("dddd, MMMM d, yyyy")</p>
+    <p><strong>Location:</strong> @model.Location</p>
+
+    @if (!string.IsNullOrWhiteSpace(model.Description))
+    {
+        <p>@model.Description</p>
+    }
+
+    <p><strong>Registered Attendees:</strong> @EventSvc.GetAttendanceCount(model.Id)</p>
+
+    <div class="mt-3 d-flex gap-2">
+        <NavLink class="btn btn-secondary" href="/events">Back to Events</NavLink>
+
+        <NavLink class="btn btn-primary" href="@($"/events/{model.Id}/register")">
+            Register
+        </NavLink>
+
+        <NavLink class="btn btn-outline-secondary" href="@($"/events/{model.Id}/participants")">
+            View Participants
+        </NavLink>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private EventEase.Models.EventModel? model;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        model = await EventSvc.GetByIdAsync(id);
+
+        if (model == null)
+            NavigationManager.NavigateTo("/not-found");
+    }
+}

@@ -1,0 +1,72 @@
+@page "/events/{id:int}/participants"
+@inject EventEase.Services.EventService EventSvc
+@inject NavigationManager NavigationManager
+
+<h1 class="mb-4">Participants</h1>
+
+@if (evt is null)
+{
+    <p>Loading…</p>
+}
+else
+{
+    <h3 class="mb-3">@evt.Name</h3>
+
+    @if (participants.Count == 0)
+    {
+        <div class="alert alert-info">
+            No participants have registered for this event yet.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-bordered shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 60px;">#</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Registration Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < participants.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@participants[i].FullName</td>
+                        <td>@participants[i].Email</td>
+                        <td>@participants[i].RegisteredAt.ToString("ddd, MMM d yyyy, HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <button class="btn btn-secondary mt-3" @onclick="GoBack">
+        Back to Event
+    </button>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private EventEase.Models.EventModel? evt;
+    private List<EventEase.Services.ParticipantRecord> participants = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        evt = await EventSvc.GetByIdAsync(id);
+
+        if (evt == null)
+        {
+            NavigationManager.NavigateTo("/not-found");
+            return;
+        }
+
+        participants = EventSvc.GetParticipants(id);
+    }
+
+    private void GoBack() =>
+        NavigationManager.NavigateTo($"/events/{id}");
+}

@@ -1,0 +1,99 @@
+@page "/events/{id:int}/register"
+@using System.ComponentModel.DataAnnotations
+@inject EventEase.Services.EventService EventSvc
+@inject NavigationManager NavigationManager
+@inject SessionService Session
+
+<h1>Register</h1>
+
+@if (evt is null)
+{
+    <p>Loading…</p>
+
+    <NavLink class="btn btn-secondary" href="/events">Back to Events</NavLink>
+}
+else if (submitted)
+{
+    @if (alreadyRegistered)
+    {
+        <div class="alert alert-info">
+            The name <strong>@form.FullName</strong> is already registered for <strong>@evt.Name</strong>.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success">
+            Thank you for registering for <strong>@evt.Name</strong>!
+        </div>
+    }
+
+    <NavLink class="btn btn-secondary" href="/events">Back to Events</NavLink>
+}
+else
+{
+    <p>
+        <strong>Event:</strong> @evt.Name (@evt.Date.ToString("MMM d, yyyy") – @evt.Location)
+    </p>
+
+    <EditForm Model="form" OnValidSubmit="Submit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText class="form-control mb-2"
+                   @bind-Value="form.FullName"
+                   placeholder="Full name" />
+
+        <InputText class="form-control mb-2"
+                   @bind-Value="form.Email"
+                   placeholder="Email" />
+
+        <button class="btn btn-primary me-2" type="submit">Submit</button>
+
+        <!-- Correct Cancel Button -->
+        <NavLink class="btn btn-secondary" href="/events">Cancel</NavLink>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private EventEase.Models.EventModel? evt;
+    private bool submitted;
+    private bool alreadyRegistered;
+    private RegistrationForm form = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        evt = await EventSvc.GetByIdAsync(id);
+
+        if (evt == null)
+            NavigationManager.NavigateTo("/not-found");
+    }
+
+    private void Submit()
+    {
+        submitted = true;
+
+        alreadyRegistered = EventSvc.IsNameRegistered(id, form.FullName);
+
+        if (!alreadyRegistered)
+        {
+            Session.CurrentUserName = form.FullName;
+            Session.RegisteredEvents.Add(id);
+
+            EventSvc.RegisterAttendance(id, form.FullName, form.Email);
+        }
+    }
+
+    public class RegistrationForm
+    {
+        [Required(ErrorMessage = "Full name is required.")]
+        [StringLength(50, MinimumLength = 2,
+            ErrorMessage = "Full name must be between 2 and 50 characters.")]
+        public string FullName { get; set; } = "";
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "";
+    }
+}

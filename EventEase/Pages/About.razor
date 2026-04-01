@@ -1,0 +1,72 @@
+@page "/about"
+
+<div class="container py-4">
+
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold">About EventEase</h1>
+        <p class="lead text-secondary">
+            Your smart and seamless way to explore, register, and participate in events.
+        </p>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4 class="card-title">What is EventEase?</h4>
+            <p class="card-text">
+                EventEase is a modern Blazor WebAssembly demo application built to showcase 
+                event browsing, attendee tracking, and easy registration powered by clean UI 
+                and state-of-the-art client-side technology.
+            </p>
+            <p class="card-text">
+                It demonstrates best practices in Blazor, including routing, validation, 
+                component reutilization, in-memory services, and optimized UI rendering.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Why EventEase?</h5>
+                    <p class="card-text">
+                        Whether you're exploring a conference, workshop, or tech event, 
+                        EventEase offers a smooth and intuitive experience.
+                    </p>
+                    <ul>
+                        <li>Fast event browsing</li>
+                        <li>Clean and responsive UI</li>
+                        <li>Simple one‑click registration</li>
+                        <li>Name-based attendance tracking</li>
+                        <li>Lightweight and optimized performance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Technologies Used</h5>
+                    <ul class="card-text">
+                        <li><strong>Blazor WebAssembly</strong></li>
+                        <li><strong>.NET 8 / .NET 10</strong></li>
+                        <li><strong>Bootstrap 5</strong> for layout and styling</li>
+                        <li><strong>Dependency Injection</strong> for services</li>
+                        <li><strong>DataAnnotations</strong> for validation</li>
+                        <li><strong>Component-based architecture</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 text-center">
+        <h4 class="fw-bold">Ready to Explore?</h4>
+        @* Fixed the NavLink below *@
+        <NavLink class="btn btn-primary btn-lg" href="events">
+            Browse Events
+        </NavLink>
+    </div>
+
+</div>

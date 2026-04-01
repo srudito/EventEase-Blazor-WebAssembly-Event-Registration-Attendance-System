@@ -1,0 +1,55 @@
+@page "/events"
+@inject EventEase.Services.EventService EventSvc
+
+<h1 class="mb-3">Events</h1>
+
+@if (items == null)
+{
+    <p>Loading…</p>
+}
+else if (totalCount == 0)
+{
+    <p>No events found.</p>
+}
+else
+{
+    <Virtualize ItemsProvider="LoadEvents" Context="ev">
+        <EventCard EventItem="ev" />
+    </Virtualize>
+}
+
+@code {
+    private List<EventEase.Models.EventModel>? items;
+    private int totalCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await EventSvc.GetEventsAsync();
+        totalCount = items.Count;
+    }
+
+    private ValueTask<ItemsProviderResult<EventEase.Models.EventModel>> LoadEvents(ItemsProviderRequest request)
+    {
+        if (items is null)
+        {
+            return ValueTask.FromResult(
+                new ItemsProviderResult<EventEase.Models.EventModel>(
+                    Array.Empty<EventEase.Models.EventModel>(),
+                    0
+                )
+            );
+        }
+
+        var chunk = items
+            .Skip(request.StartIndex)
+            .Take(request.Count)
+            .ToList();
+
+        return ValueTask.FromResult(
+            new ItemsProviderResult<EventEase.Models.EventModel>(
+                chunk,
+                items.Count
+            )
+        );
+    }
+}
