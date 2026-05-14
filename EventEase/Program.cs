@@ -16,3 +16,5 @@ builder.Services.AddSingleton<EventService>();
 builder.Services.AddScoped<SessionService>();
 
 await builder.Build().RunAsync();
+
+//test
